@@ -3,7 +3,7 @@ const searchbar = document.querySelector(".searchbar-container");
 const profilecontainer = document.querySelector(".profile-container");
 const root = document.documentElement.style;
 const get = (param) => document.getElementById(`${param}`);
-const url = "";
+const url = "https://api.github.com/users/";
 const noresults = get("no-results");
 const btnmode = get("btn-mode");
 const modetext = get("mode-text");
@@ -24,7 +24,6 @@ const page = get("page");
 const twitter = get("twitter");
 const company = get("company");
 let darkMode = false;
-
 
 // Event Listeners
 btnsubmit.addEventListener("click", function () {
@@ -58,39 +57,6 @@ btnmode.addEventListener("click", function () {
 });
 
 // Functions
-
-//API CALL
-
-function getUserData(gitUrl) {
-    fetch(gitUrl, {
-      headers: {
-        'Authorization': `token ${}`
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.message === "Not Found") {
-          showNoResults();
-        } else {
-          updateProfile(data);
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
-  
-  function showNoResults() {
-    noresults.style.display = 'block';
-    noresults.style.opacity = 1;
-    setTimeout(() => {
-      noresults.style.opacity = 0;
-      setTimeout(() => {
-        noresults.style.display = 'none';
-      }, 300); // matches the transition duration
-    }, 2000); // display for 2 seconds
-}
-
 function getUserData(gitUrl) {
   fetch(gitUrl)
     .then((response) => response.json())
@@ -103,8 +69,6 @@ function getUserData(gitUrl) {
     });
 }
 
-
-//RENDER
 function updateProfile(data) {
   if (data.message !== "Not Found") {
     noresults.style.display = "none";
@@ -141,8 +105,18 @@ function updateProfile(data) {
 }
 
 
+//dark mode default
+const prefersDarkMode = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-//SWITCH TO DARK MODE - activateDarkMode()
+if (localStorage.getItem("dark-mode")) {
+  darkMode = localStorage.getItem("dark-mode");
+  darkModeProperties();
+} else {
+  localStorage.setItem("dark-mode", prefersDarkMode);
+  darkMode = prefersDarkMode;
+  lightModeProperties();
+}
+
 function darkModeProperties() {
   root.setProperty("--lm-bg", "#141D2F");
   root.setProperty("--lm-bg-content", "#1E2A47");
@@ -153,14 +127,8 @@ function darkModeProperties() {
   modeicon.src = "./assets/images/sun-icon.svg";
   root.setProperty("--lm-icon-bg", "brightness(1000%)");
   darkMode = true;
-  console.log("darkmode changed to " + darkMode);
-  localStorage.setItem("dark-mode", true);  console.log("setting dark mode to false");
-
-  console.log("setting dark mode to true");
-
+  localStorage.setItem("dark-mode", true);
 }
-
-//SWITCH TO LIGHT MODE - activateLightMode()
 function lightModeProperties() {
   root.setProperty("--lm-bg", "#F6F8FF");
   root.setProperty("--lm-bg-content", "#FEFEFE");
@@ -171,36 +139,8 @@ function lightModeProperties() {
   modeicon.src = "./assets/images/moon-icon.svg";
   root.setProperty("--lm-icon-bg", "brightness(100%)");
   darkMode = false;
-  console.log("darkmode changed to " + darkMode);
-
   localStorage.setItem("dark-mode", false);
-  console.log("setting dark mode to false");
 }
 
 
-//INITIALISE UI
-function init() {
-
-  darkMode = false;
-
-  const value = localStorage.getItem("dark-mode");
-
-  if(value === null) {
-    console.log("null k andar");
-    localStorage.setItem("dark-mode", darkMode);
-    lightModeProperties();
-  }
-  else if(value == "true") {
-    console.log("truer k andar");
-    darkModeProperties();
-  }
-  else if(value == "false") {
-    console.log("false k andar");
-    lightModeProperties();
-  }
-
-//IF YOU WANT TO SET A DEFAULT PROFILE TO THE HOME PAGE
-  getUserData(url + "amantoor17");
-}
-
-init();
+getUserData(url + "lokeshloki3");
